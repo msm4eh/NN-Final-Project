@@ -1,0 +1,125 @@
+# Copenhagen household waste classes + source-dataset label mapping.
+# Issue #7. STATUS: DRAFT - needs team review (see "decisions" below).
+
+meta:
+  status: draft
+  sources:
+    - url: https://affald.kk.dk/affaldsordninger
+      note: Official list of collection schemes (Bleaffald, Madaffald, Plast, Mad- og drikkekartoner, Papir, Restaffald, Metal, Pap, Glas, Stort indbo, Batterier, Tekstilaffald)
+    - url: https://affald.kk.dk/affaldsfraktion/saadan-sorterer-du-plast
+      note: Plast incl. soft + hard plastic; collected in the same bin as cartons
+    - url: https://affald.kk.dk/affaldsfraktion/saadan-sorterer-du-mad-og-drikkekartoner
+      note: Cartons are sorted WITH plast, not with pap
+    - url: https://affald.kk.dk/affaldsfraktion/saadan-sorterer-du-restaffald
+      note: Restaffald examples
+  accessed: 2026-11-10
+  # TODO(team): open each page above, confirm the class list and the example
+  # items below, then set this to true and record who checked.
+  verified_by_human: false
+
+classes:
+  - id: 0
+    key: madaffald
+    da: Madaffald
+    en: Food waste
+    description: Food scraps and organic kitchen waste.
+    examples: [nut shells, coffee grounds and filters, vegetable peelings]
+  - id: 1
+    key: restaffald
+    da: Restaffald
+    en: Residual waste
+    description: What cannot be sorted for recycling. Catch-all class, see decisions.
+    examples: [vacuum cleaner bags, cat litter, cigarette butts, styrofoam, wet paper]
+  - id: 2
+    key: papir
+    da: Papir
+    en: Paper
+    description: Clean paper.
+    examples: [window envelopes, books, writing and drawing paper]
+  - id: 3
+    key: pap
+    da: Pap
+    en: Cardboard
+    description: Clean, flattened cardboard.
+    examples: [shipping boxes, cardboard packaging]
+  - id: 4
+    key: plast
+    da: Plast
+    en: Plastic (incl. food and drink cartons)
+    description: Soft and hard plastic. In Copenhagen, cartons go in the same bin.
+    examples: [food packaging, plastic bottles without deposit, bags and film, milk cartons]
+  - id: 5
+    key: metal
+    da: Metal
+    en: Metal
+    description: Metal items and packaging.
+    examples: [cans, pots and pans, foil trays, aluminium foil, screws]
+  - id: 6
+    key: glas
+    da: Glas
+    en: Glass
+    description: Glass packaging and household glass, all colours in one class.
+    examples: [wine and spirits bottles, food jars, drinking glasses, vases]
+  - id: 7
+    key: tekstilaffald
+    da: Tekstilaffald
+    en: Textile waste
+    description: Clothes and other textiles.
+    examples: [clothes]
+  - id: 8
+    key: farligt_affald
+    da: Farligt affald
+    en: Hazardous waste (incl. batteries)
+    description: Small hazardous items. Batteries are the only one with image data.
+    examples: [batteries]
+
+decisions:
+  merged:
+    - what: Mad- og drikkekartoner
+      into: plast
+      why: Official kk.dk guidance collects cartons with plastic in one bin, so a bin-level classifier does not need a separate class. Also no public dataset labels them.
+    - what: brown-glass, green-glass, white-glass
+      into: glas
+      why: One glass bin in Copenhagen; colour is irrelevant for sorting.
+  excluded_classes:
+    - what: Bleaffald (nappies)
+      why: Separate scheme exists, but no image data.
+    - what: Elektronik, Stort indbo, Haveaffald, Træ
+      why: Out of scope for household item photos and no image data.
+  open_questions:
+    - restaffald is a catch-all. Source label "trash" is mapped to it. Keep as a real class, or drop it and the "trash" images?
+    - shoes are dropped until someone confirms on kk.dk whether shoes count as tekstilaffald.
+    - battery -> farligt_affald is assumed; kk.dk lists "Batterier" as its own scheme. Confirm and rename the class if needed.
+    - Check licences of every dataset before use (see "licence_note" per dataset).
+
+datasets:
+  trashnet:
+    licence_note: Verify on the TrashNet GitHub repo before use.
+    labels: [cardboard, glass, metal, paper, plastic, trash]
+    map:
+      cardboard: pap
+      glass: glas
+      metal: metal
+      paper: papir
+      plastic: plast
+      trash: restaffald
+    drop: []
+
+  garbage_12:
+    # Kaggle "Garbage Classification" (12 classes). Verify exact name and licence.
+    licence_note: Verify on the Kaggle dataset page before use.
+    labels: [battery, biological, brown-glass, cardboard, clothes, green-glass, metal, paper, plastic, shoes, trash, white-glass]
+    map:
+      battery: farligt_affald
+      biological: madaffald
+      brown-glass: glas
+      cardboard: pap
+      clothes: tekstilaffald
+      green-glass: glas
+      metal: metal
+      paper: papir
+      plastic: plast
+      trash: restaffald
+      white-glass: glas
+    drop:
+      - shoes   # unclear which bin; see open_questions
