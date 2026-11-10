@@ -1,1 +1,1 @@
-# NN-Final-Project
+# NN-Final-Project: Trash Classification
