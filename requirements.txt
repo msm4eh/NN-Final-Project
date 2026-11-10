@@ -1,0 +1,13 @@
+# Python 3.11
+# TODO before merging: install in a fresh venv, run `pip freeze`, and replace
+# each line below with the exact pinned version (e.g. torch==X.Y.Z).
+torch
+torchvision
+scikit-learn
+umap-learn
+matplotlib
+pandas
+numpy
+pillow
+PyYAML
+pytest
