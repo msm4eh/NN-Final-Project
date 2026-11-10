@@ -1,0 +1,49 @@
+name: Feature
+description: A planned code change or new feature
+title: "[Feature] "
+labels: ["feature"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What should change, and why?
+    validations: {required: true}
+  - type: textarea
+    id: dod
+    attributes:
+      label: Definition of done
+      description: Concrete, checkable criteria (commands to run, files produced, numbers to hit).
+      placeholder: "- [ ] `python -m src.train --epochs 1` runs without errors\n- [ ] ..."
+    validations: {required: true}
+  - type: textarea
+    id: plan
+    attributes:
+      label: Plan
+      description: The steps. More than ~5 steps? Split the issue.
+      placeholder: "1. ...\n2. ..."
+    validations: {required: true}
+  - type: textarea
+    id: out_of_scope
+    attributes:
+      label: Out of scope
+      description: Files, folders or behaviour the agent must NOT touch.
+    validations: {required: true}
+  - type: textarea
+    id: depends
+    attributes:
+      label: Depends on
+      description: Issues that must be merged first (optional).
+  - type: input
+    id: planning_model
+    attributes:
+      label: Planning model
+      description: Tool and model used to plan this issue.
+      placeholder: "e.g. ChatGPT (GPT-x), Claude (model name)"
+    validations: {required: true}
+  - type: textarea
+    id: planning_chat
+    attributes:
+      label: Planning chat
+      description: Link to the chat, or a summary of the key prompts — including suggestions you rejected and why.
+    validations: {required: true}

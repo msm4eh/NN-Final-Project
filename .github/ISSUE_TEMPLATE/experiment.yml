@@ -1,0 +1,50 @@
+name: Experiment
+description: Test an idea with an unknown outcome
+title: "[Experiment] "
+labels: ["experiment"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What question are we answering?
+    validations: {required: true}
+  - type: textarea
+    id: hypothesis
+    attributes:
+      label: Hypothesis
+      description: What do you expect to happen, and why?
+    validations: {required: true}
+  - type: textarea
+    id: plan
+    attributes:
+      label: Plan
+      description: Steps, runs, and the metric(s) used to compare. Keep everything else fixed.
+    validations: {required: true}
+  - type: textarea
+    id: out_of_scope
+    attributes:
+      label: Out of scope
+      description: What not to change (e.g. data split, other hyperparameters).
+    validations: {required: true}
+  - type: input
+    id: planning_model
+    attributes:
+      label: Planning model
+      placeholder: "e.g. ChatGPT (GPT-x), Claude (model name)"
+    validations: {required: true}
+  - type: textarea
+    id: planning_chat
+    attributes:
+      label: Planning chat
+      description: Link, or summary of key prompts — including suggestions you rejected and why.
+    validations: {required: true}
+  - type: textarea
+    id: results
+    attributes:
+      label: Results
+      description: Fill in when the experiment is done. Settings (seed, commit, config), numbers, conclusion. "It didn't work" is a valid result — write what you learned.
+      value: |
+        **Settings:**
+        **Numbers:**
+        **Conclusion:**
