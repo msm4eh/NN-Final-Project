@@ -36,4 +36,4 @@ def test_every_class_has_at_least_one_source():
 
 def test_unknown_label_raises():
     with pytest.raises(KeyError):
-        map_source_label("trashnet", "banana")
+        map_source_label("taco", "banana")
