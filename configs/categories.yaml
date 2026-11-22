@@ -3,7 +3,7 @@
 # Dataset: TACO (Trash Annotations in Context). Mapping revised 2026-11-17.
 
 meta:
-  status: draft
+  status: final
   sources:
     - url: https://affald.kk.dk/affaldsordninger
       note: Official list of collection schemes (Bleaffald, Madaffald, Plast, Mad- og drikkekartoner, Papir, Restaffald, Metal, Pap, Glas, Stort indbo, Batterier, Tekstilaffald)
@@ -13,10 +13,11 @@ meta:
       note: Cartons are sorted WITH plast, not with pap
     - url: https://affald.kk.dk/affaldsfraktion/saadan-sorterer-du-restaffald
       note: Restaffald examples (cigarette butts, styrofoam, some crisp bags, wet paper)
-  accessed: 2026-11-10
+  accessed: 2026-11-22
   # TODO(team): open each page above, confirm the class list and the example
   # items below, then set this to true and record who checked.
-  verified_by_human: false
+  verified_by_human: true
+  # verified by Penelope Roberts 11/22/26
 
 classes:
   - id: 0
@@ -61,12 +62,6 @@ classes:
     en: Glass
     description: Glass packaging and household glass, all colours in one class.
     examples: [wine and spirits bottles, food jars, drinking glasses, vases]
-  - id: 7
-    key: farligt_affald
-    da: Farligt affald
-    en: Hazardous waste (incl. batteries)
-    description: Small hazardous items. In TACO only batteries and aerosol cans.
-    examples: [batteries, aerosol cans]
 
 decisions:
   merged:
@@ -83,15 +78,44 @@ decisions:
       why: Separate scheme exists, but no image data.
     - what: Elektronik, Stort indbo, Haveaffald, Trae
       why: Out of scope for household item photos and no image data.
-  open_questions:
-    - madaffald (8 TACO objects) and farligt_affald (12) are far too small to split 70/15/15 (test split gets about 1 image each). Keep, drop, or add another dataset for them? Feeds experiment #13.
-    - Severe imbalance (plast about 2100 objects vs pap 80). Feeds experiment #13.
-    - restaffald is a catch-all. Keep as a real class? It currently holds cigarettes, styrofoam, foam items, crisp packets and tissues (cigarettes alone are 667).
-    - Dropped until someone confirms on kk.dk which bin they belong in - Paper cup, Broken glass (138 objects), Pizza box, Wrapping paper, Other carton, Meal carton, blister packs, Plastic glooves, Rope and strings, Shoe, Paper straw, Plastified paper bag.
-    - Deposit (pant) bottles and cans go through the deposit system; a photo cannot show whether an item has a deposit. Drink can, Clear plastic bottle and Glass bottle are mapped to metal, plast and glas regardless.
-    - Aerosol is mapped to farligt_affald (kk.dk says packaging with most hazard symbols is hazardous waste). Confirm.
-    - Which TACO annotation file do we use? The official data/annotations.json has 1500 images; data/annotations_unofficial.json has 3831.
-    - Battery goes to farligt_affald, but kk.dk lists "Batterier" as its own scheme. Confirm and rename the class if needed.
+    - what: Farligt Affald
+      why: no usable dataset found; web-scraped sets were unlicensed, duplicated and off-domain; TACO has too few objects to evaluate
+      known_limitation: The model has no hazardous class, so it cannot recognise batteries, aerosols, paint or bulbs. It will sort them into another bin, which is wrong in Copenhagen. This must be reported in the evaluation (#11).
+  open_questions: []
+  resolved:
+    - question: keep/drop/add another dataset for madaffald and farligt_affald?
+      decision: add TU Wien dataset for food waste and drop farligt_affald
+      why: food waste is a very prominent category in real life and hazardous waste had too few examples and no usable data on the web. If we kept it as is, it would be too few datapoints to split.
+      decided_by: team 11/22/26
+    - question: severe imbalance.
+      decision: we are leaving this as a known issue
+      why: the imbalance is deliberate and deferred to #13.
+      decided_by: team 11/22/26
+    - question: keep restaffald as a real class? 
+      decision: keep it.
+      why: without this, our model could end up putting harmful materials like cigarettes into a recycling bin. This is a valuable class to keep.
+      decided_by: team 11/22/26
+    - question: dropped labels
+      decision: reroute Paper cup to Restaffald, Broken glass to Glas, Pizza box to Restaffald, & Wrapping paper to Restaffald. verified by Mackey & Penelope Nov 22 on the kk.dk website
+      why: the other categories are ambiguous, and have too few instances to make the debate worth it. These categories that we removed from dropping will enhance our dataset.
+      decided_by: team 11/22/26
+    - question: Pant bottles
+      decision: keep them as being mapped to their respective bins.
+      why: a photo cannot show whether an item has a deposit, and our model is only supposed to predict waste categories.
+      decided_by: team 11/22/26
+    - question: aerosol mapped to farligt_affald
+      decision: superseded, class removed
+      why: see question and decision 1
+      decided_by: team 11/22/26
+    - question: which annotations file to use
+      decision: we will use both and track which annotations are official and unofficial, but keep validation and test sets from the official file only, with the exception of the added food waste photos and annotations that will be verified by our team.
+      why: we want more data to work with, and to only use the official data to validate to make sure our accuracy reporting is correct. 
+      decided_by: team 11/22/26
+    - question: battery category
+      decision: superseded, class removed
+      why: see question and decision 1
+      decided_by: team 11/22/26
+      
 
 datasets:
   taco:
@@ -173,7 +197,10 @@ datasets:
     map:
       # madaffald (8 objects)
       Food waste: madaffald
-      # restaffald (888)
+      # restaffald (970)
+      Wrapping paper: restaffald
+      Pizza box: restaffald
+      Paper cup: restaffald
       Cigarette: restaffald
       Styrofoam piece: restaffald
       Foam cup: restaffald
@@ -218,26 +245,58 @@ datasets:
       Drink can: metal
       Pop tab: metal
       Scrap metal: metal
-      # glas (116)
+      # glas (254)
+      Broken glass: glas
       Glass bottle: glas
       Glass jar: glas
       Glass cup: glas
-      # farligt_affald (12)
-      Battery: farligt_affald
-      Aerosol: farligt_affald
     drop:
-      # 14 labels, 911 objects. See open_questions for why each is unsure.
+      # 12 labels, 703 objects
+      - Battery
+      - Aerosol
       - Aluminium blister pack
       - Carded blister pack
-      - Broken glass
       - Other carton
       - Meal carton
-      - Pizza box
-      - Paper cup
-      - Wrapping paper
       - Plastified paper bag
       - Plastic glooves
       - "Rope & strings"
       - Shoe
       - Paper straw
       - Unlabeled litter
+  tuwien_organic:
+    # Image Dataset of Domestic Organic Waste and Non-Organic Contaminants
+    # for Classification and Segmentation (TU Wien Research Data)
+    # Record: https://researchdata.tuwien.ac.at/records/27k90-dvw73
+    # DOI: 10.48436/27k90-dvw73
+    source_tag: added_verified   # keep in val/test only after our own review, see decisions
+    version: "1.0.0"
+    accessed: 2026-11-22
+    archive_md5: a7bbbd61e899ede1123caa064d41fb89   # single ZIP, about 5.1 GiB
+    licence_note: >
+      CC BY 4.0. Attribution required: Wolling, F. and Pal, G. (TU Wien),
+      "Image Dataset of Domestic Organic Waste and Non-Organic Contaminants
+      for Classification and Segmentation", v1.0.0, DOI 10.48436/27k90-dvw73.
+    review:
+      verified_by_human: true
+      # by penelope on nov 22
+    data_prep_note: >
+      450 photos from one household's smart trash can over six months: 119
+      pure organic, 324 with added non-organic contaminants, 7 background.
+      Folders (confirm after download): background/, organic/, non-organic/,
+      masks/ (pixel-level segmentation) and labelmap.csv. Only the 119 pure
+      organic photos are used as madaffald for now. The 324 contaminated
+      photos also contain food waste, which could be cropped out later with the
+      masks. All photos come from one home, so near-duplicates are likely:
+      deduplicate by hash and split by photo. Open risk: if all madaffald
+      comes from this bin view and the other classes from TACO, the model may
+      learn the background. Check this in experiment #16.
+    labels:
+      - organic
+      - non-organic
+      - background
+    map:
+      organic: madaffald
+    drop:
+      - non-organic   # contains food waste too; revisit with masks
+      - background
