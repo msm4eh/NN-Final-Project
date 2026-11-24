@@ -30,7 +30,7 @@ Classes (7): madaffald, restaffald, papir, pap, plast, metal, glas. Defined in `
 
 Sources:
 - TACO (https://github.com/pedropro/TACO): the Google Drive link above. Official annotations are used for training, validation and test; unofficial annotations for training only.
-- TU Wien (https://researchdata.tuwien.ac.at/records/27k90-dvw73) "Image Dataset of Domestic Organic Waste and Non-Organic Contaminants" (Wolling and Pal, CC BY 4.0, DOI 10.48436/27k90-dvw73) : food waste, also in the Google Drive folder above.
+- TU Wien (https://researchdata.tuwien.ac.at/records/27k90-dvw73) "Image Dataset of Domestic Organic Waste and Non-Organic Contaminants" (Wolling and Pal, CC BY 4.0, DOI 10.48436/27k90-dvw73) : food waste data
 
 Download the dataset from the link above and unzip it into `data/`. The `data/` folder is git-ignored, so images are never committed. Scripts for preparing the train/val/test split are added in issue #8.
 
