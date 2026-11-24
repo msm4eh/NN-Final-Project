@@ -12,6 +12,7 @@ A neural network that classifies photos of household waste into Copenhagen's was
 | --- | --- |
 | `src/` | Importable project code (datasets, models, training, evaluation, explainability) |
 | `configs/` | YAML config files: categories, hyperparameters. No magic numbers in code |
+| `docs/` | Project documentation, including the team decision log `docs/decisions.md` |
 | `scripts/` | Command-line entry points (data preparation, plotting) |
 | `notebooks/` | Exploration only. Code that we keep moves into `src/` |
 | `tests/` | pytest tests |
@@ -47,5 +48,6 @@ pytest
 6. Never use the test split for training or tuning. Only touch it when `--split test` is passed explicitly.
 7. Plan first. Before writing code, list the files you will change and wait for approval.
 8. End AI-assisted commit messages with `Co-authored-by: <model name> <email>`.
+9. **Config files hold only what the code reads.** Record decisions and their reasons in `docs/decisions.md`, not in YAML comments or extra YAML keys. Never delete a decision: mark it `Superseded by D-xx` and add a new entry.
 
 When an agent repeats a mistake, add a rule here (through a PR).

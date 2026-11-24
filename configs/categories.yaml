@@ -1,5 +1,5 @@
 # Copenhagen household waste classes + source-dataset label mapping.
-# Issue #7. STATUS: DRAFT - needs team review (see "decisions" below).
+# Issue #7. Decisions behind this file are recorded in docs/decisions.md.
 # Dataset: TACO (Trash Annotations in Context). Mapping revised 2026-11-17.
 
 meta:
@@ -14,8 +14,6 @@ meta:
     - url: https://affald.kk.dk/affaldsfraktion/saadan-sorterer-du-restaffald
       note: Restaffald examples (cigarette butts, styrofoam, some crisp bags, wet paper)
   accessed: 2026-11-22
-  # TODO(team): open each page above, confirm the class list and the example
-  # items below, then set this to true and record who checked.
   verified_by_human: true
   # verified by Penelope Roberts 11/22/26
 
@@ -30,7 +28,7 @@ classes:
     key: restaffald
     da: Restaffald
     en: Residual waste
-    description: What cannot be sorted for recycling. Catch-all class, see decisions.
+    description: What cannot be sorted for recycling. Catch-all class, see docs/decisions.md D-06.
     examples: [vacuum cleaner bags, cat litter, cigarette butts, styrofoam, wet paper]
   - id: 2
     key: papir
@@ -63,59 +61,8 @@ classes:
     description: Glass packaging and household glass, all colours in one class.
     examples: [wine and spirits bottles, food jars, drinking glasses, vases]
 
-decisions:
-  merged:
-    - what: Mad- og drikkekartoner
-      into: plast
-      why: Official kk.dk guidance collects cartons with plastic in one bin, so a bin-level classifier does not need a separate class.
-    - what: TACO fine-grained labels (e.g. Clear plastic bottle, Plastic film, Crisp packet)
-      into: the Copenhagen bin they belong to, see datasets.taco.map
-      why: TACO has 60 litter categories; the model predicts bins, not litter types.
-  excluded_classes:
-    - what: Tekstilaffald (textiles)
-      why: TACO has no clothes or textiles (only 7 shoes, which are dropped). A class with zero images cannot be trained. Re-add if another dataset supplies textile images.
-    - what: Bleaffald (nappies)
-      why: Separate scheme exists, but no image data.
-    - what: Elektronik, Stort indbo, Haveaffald, Trae
-      why: Out of scope for household item photos and no image data.
-    - what: Farligt Affald
-      why: no usable dataset found; web-scraped sets were unlicensed, duplicated and off-domain; TACO has too few objects to evaluate
-      known_limitation: The model has no hazardous class, so it cannot recognise batteries, aerosols, paint or bulbs. It will sort them into another bin, which is wrong in Copenhagen. This must be reported in the evaluation (#11).
-  open_questions: []
-  resolved:
-    - question: keep/drop/add another dataset for madaffald and farligt_affald?
-      decision: add TU Wien dataset for food waste and drop farligt_affald
-      why: food waste is a very prominent category in real life and hazardous waste had too few examples and no usable data on the web. If we kept it as is, it would be too few datapoints to split.
-      decided_by: team 11/22/26
-    - question: severe imbalance.
-      decision: we are leaving this as a known issue
-      why: the imbalance is deliberate and deferred to #13.
-      decided_by: team 11/22/26
-    - question: keep restaffald as a real class? 
-      decision: keep it.
-      why: without this, our model could end up putting harmful materials like cigarettes into a recycling bin. This is a valuable class to keep.
-      decided_by: team 11/22/26
-    - question: dropped labels
-      decision: reroute Paper cup to Restaffald, Broken glass to Glas, Pizza box to Restaffald, & Wrapping paper to Restaffald. verified by Mackey & Penelope Nov 22 on the kk.dk website
-      why: the other categories are ambiguous, and have too few instances to make the debate worth it. These categories that we removed from dropping will enhance our dataset.
-      decided_by: team 11/22/26
-    - question: Pant bottles
-      decision: keep them as being mapped to their respective bins.
-      why: a photo cannot show whether an item has a deposit, and our model is only supposed to predict waste categories.
-      decided_by: team 11/22/26
-    - question: aerosol mapped to farligt_affald
-      decision: superseded, class removed
-      why: see question and decision 1
-      decided_by: team 11/22/26
-    - question: which annotations file to use
-      decision: we will use both and track which annotations are official and unofficial, but keep validation and test sets from the official file only, with the exception of the added food waste photos and annotations that will be verified by our team.
-      why: we want more data to work with, and to only use the official data to validate to make sure our accuracy reporting is correct. 
-      decided_by: team 11/22/26
-    - question: battery category
-      decision: superseded, class removed
-      why: see question and decision 1
-      decided_by: team 11/22/26
-      
+# Why each class is kept, merged or excluded, and why labels map where they do:
+# see docs/decisions.md.
 
 datasets:
   taco:
@@ -269,7 +216,7 @@ datasets:
     # for Classification and Segmentation (TU Wien Research Data)
     # Record: https://researchdata.tuwien.ac.at/records/27k90-dvw73
     # DOI: 10.48436/27k90-dvw73
-    source_tag: added_verified   # keep in val/test only after our own review, see decisions
+    source_tag: added_verified   # keep in val/test only after our own review, see docs/decisions.md D-03
     version: "1.0.0"
     accessed: 2026-11-22
     archive_md5: a7bbbd61e899ede1123caa064d41fb89   # single ZIP, about 5.1 GiB
