@@ -1,0 +1,13 @@
+# Project-wide settings; each issue adds its own keys. Paths are relative to the repo root unless noted.
+
+data:
+  data_dir: data
+  # Issue #8: train/val/test split of the crops listed by #23
+  crops_csv: crops/crops.csv        # relative to data_dir; columns path,label,image_id,source
+  splits_subdir: splits             # writes data/splits/{train,val,test}.csv
+  split_fractions:                  # approximate: whole photos are split, not single crops
+    train: 0.70
+    val: 0.15
+    test: 0.15
+  train_only_sources: [taco_unofficial]   # never in val/test (decision in #7)
+  seed: 42
